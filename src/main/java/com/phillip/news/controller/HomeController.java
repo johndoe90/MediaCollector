@@ -46,9 +46,10 @@ public class HomeController {
 		System.out.println(links);*/
 		
 		List<Media> media = mediaRepo.findAll();
-		for(Media medium : media){
+		model.addAttribute("media", media);
+		/*for(Media medium : media){
 			System.out.println("id: " + medium.getId() + " / " + medium.getTitle() + " / " + medium.getImageMedium());
-		}
+		}*/
 		
 		return "home";
 	}

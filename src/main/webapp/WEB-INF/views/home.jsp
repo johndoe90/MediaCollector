@@ -1,3 +1,5 @@
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ page session="false" %>
 <html>
 <head>
 	<title>Home</title>
@@ -8,5 +10,12 @@
 </h1>
 
 <P>  The time on the server is ${serverTime}. </P>
+
+<h1>MEDIA:</h1>
+<ul>
+	<c:forEach var="medium" items="${media}">
+		<li>Id: ${medium.id} / ${medium.title} / ${medium.imageMedium}</li>
+	</c:forEach>
+</ul>
 </body>
 </html>
