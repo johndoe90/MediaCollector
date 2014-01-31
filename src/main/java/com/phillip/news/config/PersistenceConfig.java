@@ -45,14 +45,14 @@ public class PersistenceConfig{
 	public DataSource dataSource(){		
 		BasicDataSource dataSource = new BasicDataSource();
 		
-		dataSource.setDriverClassName(env.getProperty("jdbc.driverClassName"));
+		/*dataSource.setDriverClassName(env.getProperty("jdbc.driverClassName"));
 		dataSource.setUrl(env.getProperty("jdbc.url"));
 		dataSource.setInitialSize(Integer.parseInt(env.getProperty("jdbc.initialSize")));
 		dataSource.setMaxActive(Integer.parseInt(env.getProperty("jdbc.maxActive")));
 		dataSource.setUsername(env.getProperty("jdbc.username"));
-		dataSource.setPassword(env.getProperty("jdbc.password"));
+		dataSource.setPassword(env.getProperty("jdbc.password"));*/
 		
-		/*try{
+		try{
 			URI dbUri = new URI(System.getenv("DATABASE_URL"));
 			String username = dbUri.getUserInfo().split(":")[0];
 			String password = dbUri.getUserInfo().split(":")[1];
@@ -65,7 +65,7 @@ public class PersistenceConfig{
 			dataSource.setDriverClassName("org.postgresql.Driver");
 		} catch (Exception e){
 			e.printStackTrace();
-		}*/
+		}
 		
 		return dataSource;
 	} 
