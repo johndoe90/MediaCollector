@@ -7,6 +7,7 @@ import java.io.File;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 
 import javax.imageio.ImageIO;
 
@@ -19,20 +20,24 @@ import com.phillip.news.utils.CommonUtils;
 
 public class ImageManager {
 	
-	private Integer IMAGE_WIDTH_SMALL = 64;
-	private Integer IMAGE_HEIGHT_SMALL = 64;
+	private final Integer IMAGE_WIDTH_SMALL;
+	private final Integer IMAGE_HEIGHT_SMALL;
 	
-	private Integer IMAGE_WIDTH_MEDIUM = 175;
-	private Integer IMAGE_HEIGHT_MEDIUM = 175;
+	private final Integer IMAGE_WIDTH_MEDIUM;
+	private final Integer IMAGE_HEIGHT_MEDIUM;
 	
 	private final String bucketName;
 	private final AmazonS3 amazonS3Client;
-	private final String temporaryStoragePath;
+	private final String temporaryStorageLocation;
 	
-	public ImageManager(AmazonS3 amazonS3Client, String bucketName, String temporaryStoragePath){
-		this.bucketName = bucketName;
+	public ImageManager(AmazonS3 amazonS3Client, Properties properties){
 		this.amazonS3Client = amazonS3Client;
-		this.temporaryStoragePath = temporaryStoragePath;
+		this.bucketName = properties.getProperty("bucketName");
+		this.temporaryStorageLocation = properties.getProperty("temporaryStorageLocation");
+		this.IMAGE_WIDTH_SMALL = Integer.parseInt(properties.getProperty("widthSmall"));
+		this.IMAGE_HEIGHT_SMALL = Integer.parseInt(properties.getProperty("heightSmall"));
+		this.IMAGE_WIDTH_MEDIUM = Integer.parseInt(properties.getProperty("widthMedium"));
+		this.IMAGE_HEIGHT_MEDIUM = Integer.parseInt(properties.getProperty("heightMedium"));
 	}
 	
 	public Integer getImageType(BufferedImage image){
@@ -87,7 +92,7 @@ public class ImageManager {
 				File imageFile;
 				String filename = CommonUtils.randomString(10) + ".jpg";
 				BufferedImage image = this.fitToFrame(original, IMAGE_WIDTH_MEDIUM, IMAGE_HEIGHT_MEDIUM);
-				if(ImageIO.write(image, "jpg", imageFile = new File(temporaryStoragePath + File.separator + filename))){
+				if(ImageIO.write(image, "jpg", imageFile = new File(temporaryStorageLocation + File.separator + filename))){
 					try{
 						System.out.println("UPLOADING IMAGE: " + imageURL);
 						amazonS3Client.putObject(new PutObjectRequest(bucketName, filename, imageFile));
@@ -114,37 +119,5 @@ public class ImageManager {
 		}
 
 		return links;
-	}
-
-	public Integer getIMAGE_WIDTH_SMALL() {
-		return IMAGE_WIDTH_SMALL;
-	}
-
-	public void setIMAGE_WIDTH_SMALL(Integer iMAGE_WIDTH_SMALL) {
-		IMAGE_WIDTH_SMALL = iMAGE_WIDTH_SMALL;
-	}
-
-	public Integer getIMAGE_HEIGHT_SMALL() {
-		return IMAGE_HEIGHT_SMALL;
-	}
-
-	public void setIMAGE_HEIGHT_SMALL(Integer iMAGE_HEIGHT_SMALL) {
-		IMAGE_HEIGHT_SMALL = iMAGE_HEIGHT_SMALL;
-	}
-
-	public Integer getIMAGE_WIDTH_MEDIUM() {
-		return IMAGE_WIDTH_MEDIUM;
-	}
-
-	public void setIMAGE_WIDTH_MEDIUM(Integer iMAGE_WIDTH_MEDIUM) {
-		IMAGE_WIDTH_MEDIUM = iMAGE_WIDTH_MEDIUM;
-	}
-
-	public Integer getIMAGE_HEIGHT_MEDIUM() {
-		return IMAGE_HEIGHT_MEDIUM;
-	}
-
-	public void setIMAGE_HEIGHT_MEDIUM(Integer iMAGE_HEIGHT_MEDIUM) {
-		IMAGE_HEIGHT_MEDIUM = iMAGE_HEIGHT_MEDIUM;
 	}
 }

@@ -18,17 +18,13 @@ public class Collector {
 	@Inject private MediaCollectors mediaCollectors;
 	
 	private boolean lastCycleIsFinished = true;	
-	private static final Integer numberOfThreads = 1;
 	private static final Integer threadPoolSize = 2;
 
 	private static ExecutorService startExecution(MediaCollectors mediaCollectors){
 		ExecutorService executor = Executors.newFixedThreadPool(threadPoolSize);
-		//executor.execute(new TestTask());
 		for(MediaCollector mediaCollector : mediaCollectors.getMediaCollectors()){
 			for(MediaCollectionTask task : mediaCollector.getMediaCollectionTasks()){
-				for(int i = 0; i < numberOfThreads; i++){
-					executor.execute(task);
-				}
+				executor.execute(task);
 			}
 		}
 		
@@ -37,7 +33,7 @@ public class Collector {
 		return executor;
 	}
 	
-	@Scheduled(fixedRate = 300000)
+	@Scheduled(fixedRate = 600000)
 	public void startCycle() throws Exception{
 		System.out.println("Enter startCycle");
 		if(lastCycleIsFinished){

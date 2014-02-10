@@ -24,6 +24,7 @@ public class DiePresseMediaMapper extends AbstractMediaMapper{
 
 	@Override
 	public Category getCategory(Document document) {
-		return Categories.POLITICS_FOREIGN;
+		//return Categories.POLITICS_FOREIGN;
+		return Categories.POLITICS;
 	}
 }

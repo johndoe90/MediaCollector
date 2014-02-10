@@ -23,7 +23,7 @@ public abstract class AbstractMediaMapper implements MediaMapper{
 	}
 	
 	protected boolean isValidMedia(Document document){
-		return (getUrl(document) != null && getType(document) != null && getTitle(document) != null && getDate(document) != null);
+		return (getUrl(document) != null && getType(document) != null && getTitle(document) != null && getDate(document) != null && getCategory(document) != null);
 	}
 	
 	@Override

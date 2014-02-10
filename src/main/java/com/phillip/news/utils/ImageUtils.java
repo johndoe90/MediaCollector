@@ -86,40 +86,6 @@ public class ImageUtils {
 		
 		if(downloadSuccess){
 			try{
-				BufferedImage imageMedium = ImageUtils.fitToFrame(original, FRAME_MEDIUM, FRAME_MEDIUM);
-				String mediumFilename = ImageUtils.createRandomFileName(10) + ".jpg";
-				File file;
-				if(ImageIO.write(imageMedium, "jpg", file = new File("/home/johndoe/Dokumente/SoftwareDevelopment/STSWorkspace/MediaCollector/data" + File.separator + mediumFilename))){
-					//upload to amazon
-
-					AmazonS3Client amazonClient = new AmazonS3Client(new BasicAWSCredentials("AKIAJR42LPOGZ7U7SPFQ", "bj7yQVkrUQA1tpfiXlkrFFH0+bftv79kZrDXXtQO"));
-					amazonClient.putObject(new PutObjectRequest("nevermind90", mediumFilename, file));
-					
-					file.delete();
-					
-					links.put("small", "http://nevermind90.s3.amazonaws.com/" + mediumFilename);
-					links.put("medium", "http://nevermind90.s3.amazonaws.com/" + mediumFilename);
-					links.put("large", "http://nevermind90.s3.amazonaws.com/" + mediumFilename);
-				}
-			} catch(AmazonServiceException ase){
-				System.out.println("Caught an AmazonServiceException, which " +
-	            		"means your request made it " +
-	                    "to Amazon S3, but was rejected with an error response" +
-	                    " for some reason.");
-	            System.out.println("Error Message:    " + ase.getMessage());
-	            System.out.println("HTTP Status Code: " + ase.getStatusCode());
-	            System.out.println("AWS Error Code:   " + ase.getErrorCode());
-	            System.out.println("Error Type:       " + ase.getErrorType());
-	            System.out.println("Request ID:       " + ase.getRequestId());
-			} catch(AmazonClientException ace){
-				System.out.println("Caught an AmazonClientException, which " +
-	            		"means the client encountered " +
-	                    "an internal error while trying to " +
-	                    "communicate with S3, " +
-	                    "such as not being able to access the network.");
-	            System.out.println("Error Message: " + ace.getMessage());
-			} catch(Exception e){}
-			/*try{
 				BufferedImage imageSmall = ImageUtils.fitToFrame(original, FRAME_SMALL, FRAME_SMALL);
 				String smallFilename = ImageUtils.createRandomFileName(10) + ".jpg";
 				if(ImageIO.write(imageSmall, "jpg", new File(FilesConfig.TOMCAT_LOCAL_DIRECTORY + File.separator + smallFilename))){
@@ -145,7 +111,7 @@ public class ImageUtils {
 						links.put("large", FilesConfig.DOMAIN_RESOURCES_IMG + File.separator + largeFilename);
 					}
 				}	
-			}catch(Exception e){}*/		
+			}catch(Exception e){}
 			
 			links.put("width", Integer.toString(original.getWidth()));
 			links.put("height", Integer.toString(original.getHeight()));

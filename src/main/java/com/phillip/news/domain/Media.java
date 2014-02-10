@@ -50,7 +50,7 @@ public class Media extends AbstractPersistable<Long>{
 	@Column(name = "URL", nullable = false, unique = true)
 	private String url;
 	
-	@Column(name = "KEYWORDS", nullable = false)
+	@Column(name = "KEYWORDS", nullable = false, length = 1024)
 	private String keywords;
 	
 	@Column(name = "TYPE", nullable = false)

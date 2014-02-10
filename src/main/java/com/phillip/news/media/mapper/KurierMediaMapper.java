@@ -39,10 +39,22 @@ public class KurierMediaMapper extends AbstractMediaMapper{
 	public Category getCategory(Document document) {
 		String url = document.baseUri();
 		String[] parts = url.replaceAll("http://|https://", "").split("/");
-		String superCategory = parts[1].toLowerCase();
-		String subCategory = parts[2].toLowerCase();
+		String category = parts[1].toLowerCase();
+		//String subCategory = parts[2].toLowerCase();
 		
-		switch(superCategory){
+		switch(category){
+			case "politik": return Categories.POLITICS;
+			case "wirtschaft": return Categories.ECONOMY;
+			case "sport": return Categories.SPORTS;
+			case "chronik": return Categories.PANORAMA;
+			case "lebensart": return Categories.LIFE;
+			case "kultur": return Categories.CULTURE;
+			case "immo": return Categories.REALESTATE;
+			case "karrieren": return Categories.EDUCATION;
+			default: return Categories.OTHER;
+		}
+		
+		/*switch(superCategory){
 			case "politik":
 				switch(subCategory){
 					case "inland": return Categories.POLITICS_DOMESTIC;
@@ -61,6 +73,6 @@ public class KurierMediaMapper extends AbstractMediaMapper{
 				}
 			default:
 				return Categories.OTHER;
-		}
+		}*/
 	}
 }

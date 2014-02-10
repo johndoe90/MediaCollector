@@ -3,6 +3,7 @@ package com.phillip.news.config;
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Properties;
 
 import javax.inject.Inject;
 import javax.inject.Qualifier;
@@ -43,43 +44,30 @@ public class ApplicationContextConfig extends WebMvcConfigurerAdapter{
 	@Inject private AmazonS3 amazonS3Client;
 	@Inject private MediaService mediaService;
 	@Inject private MediaCollector kurierMediaCollector;
+	@Inject private MediaCollector derStandardMediaCollector;
 	
 	@Bean
 	public ImageManager imageManager(){
-		return new ImageManager(
-			amazonS3Client,
-			env.getRequiredProperty("amazonS3.images.bucketName"), 
-			env.getRequiredProperty("amazonS3.images.temporaryLocalStorageLocation"));
+		Properties properties = new Properties();
+		properties.setProperty("bucketName", env.getRequiredProperty("amazonS3.images.bucketName"));
+		properties.setProperty("temporaryStorageLocation", env.getRequiredProperty("amazonS3.images.temporaryLocalStorageLocation"));
+		properties.setProperty("widthSmall", env.getRequiredProperty("amazonS3.images.widthSmall"));
+		properties.setProperty("heightSmall", env.getRequiredProperty("amazonS3.images.heightSmall"));
+		properties.setProperty("widthMedium", env.getRequiredProperty("amazonS3.images.widthMedium"));
+		properties.setProperty("heightMedium", env.getRequiredProperty("amazonS3.images.heightMedium"));
+		
+		return new ImageManager(amazonS3Client, properties);
 	}
 	
 	@Bean
 	public MediaCollectors mediaCollectors(){
 		MediaCollectors mediaCollectors = new MediaCollectors();
 		mediaCollectors.addMediaCollector(kurierMediaCollector);
+		mediaCollectors.addMediaCollector(derStandardMediaCollector);
 		
 		return mediaCollectors;
 		
 	}
-	
-	/*public MediaCollector kurierMediaCollector(){
-		MediaCollector kurierMediaCollector = new MediaCollectorImpl();
-		ArticleCollectionTaskConfiguration config = assembleConfiguration(MediaProviders.KURIER);
-		KurierArticleCollectionTask kurierArticleCollectionTask = 
-			new KurierArticleCollectionTask(config, MediaProviders.KURIER, mediaService);
-		kurierMediaCollector.addMediaCollectionTask(kurierArticleCollectionTask);
-		
-		return kurierMediaCollector;
-	}
-	
-	public MediaCollector diePresseMediaCollector(){
-		MediaCollector diePresseMediaCollector = new MediaCollectorImpl();
-		ArticleCollectionTaskConfiguration config = assembleConfiguration(MediaProviders.DIE_PRESSE);
-		DiePresseArticleCollectionTask diePresseArticleCollectionTask = 
-			new DiePresseArticleCollectionTask(config, MediaProviders.DIE_PRESSE, mediaService);
-		diePresseMediaCollector.addMediaCollectionTask(diePresseArticleCollectionTask);
-		
-		return diePresseMediaCollector;
-	}*/
 	
 	@Override
 	public void addResourceHandlers(ResourceHandlerRegistry registry) {
