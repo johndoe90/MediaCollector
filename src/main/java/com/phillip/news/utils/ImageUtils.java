@@ -85,13 +85,13 @@ public class ImageUtils {
 		}while(attempts < 2 && !downloadSuccess);
 		
 		if(downloadSuccess){
-			try{
+			/*try{
 				BufferedImage imageSmall = ImageUtils.fitToFrame(original, FRAME_SMALL, FRAME_SMALL);
 				String smallFilename = ImageUtils.createRandomFileName(10) + ".jpg";
 				if(ImageIO.write(imageSmall, "jpg", new File(FilesConfig.TOMCAT_LOCAL_DIRECTORY + File.separator + smallFilename))){
 					links.put("small", FilesConfig.DOMAIN_RESOURCES_IMG + File.separator + smallFilename);
 				}
-			}catch(Exception e){}
+			}catch(Exception e){}*/
 
 			try{
 				BufferedImage imageMedium = ImageUtils.fitToFrame(original, FRAME_MEDIUM, FRAME_MEDIUM);
@@ -103,7 +103,7 @@ public class ImageUtils {
 				}
 			}catch(Exception e){}
 			
-			try{
+			/*try{
 				BufferedImage imageLarge = original;
 				if(imageLarge.getWidth() > FRAME_MEDIUM || imageLarge.getHeight() > FRAME_MEDIUM){
 					String largeFilename = ImageUtils.createRandomFileName(10) + ".jpg";
@@ -111,7 +111,7 @@ public class ImageUtils {
 						links.put("large", FilesConfig.DOMAIN_RESOURCES_IMG + File.separator + largeFilename);
 					}
 				}	
-			}catch(Exception e){}
+			}catch(Exception e){}*/
 			
 			links.put("width", Integer.toString(original.getWidth()));
 			links.put("height", Integer.toString(original.getHeight()));

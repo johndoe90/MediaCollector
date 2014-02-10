@@ -26,6 +26,12 @@ public class ImageManager {
 	private final Integer IMAGE_WIDTH_MEDIUM;
 	private final Integer IMAGE_HEIGHT_MEDIUM;
 	
+	private final String DEFAULT_IMAGE_SMALL;
+	private final String DEFAULT_IMAGE_MEDIUM;
+	private final String DEFAULT_IMAGE_LARGE;
+	private final Integer DEFAULT_IMAGE_WIDTH;
+	private final Integer DEFAULT_IMAGE_HEIGHT;
+	
 	private final String bucketName;
 	private final AmazonS3 amazonS3Client;
 	private final String temporaryStorageLocation;
@@ -34,6 +40,13 @@ public class ImageManager {
 		this.amazonS3Client = amazonS3Client;
 		this.bucketName = properties.getProperty("bucketName");
 		this.temporaryStorageLocation = properties.getProperty("temporaryStorageLocation");
+		
+		this.DEFAULT_IMAGE_SMALL = properties.getProperty("defaultImageSmall");
+		this.DEFAULT_IMAGE_MEDIUM = properties.getProperty("defaultImageMedium");
+		this.DEFAULT_IMAGE_LARGE = properties.getProperty("defaultImageLarge");
+		this.DEFAULT_IMAGE_WIDTH = Integer.parseInt(properties.getProperty("defaultImageWidth"));
+		this.DEFAULT_IMAGE_HEIGHT = Integer.parseInt(properties.getProperty("defaultImageHeight"));
+		
 		this.IMAGE_WIDTH_SMALL = Integer.parseInt(properties.getProperty("widthSmall"));
 		this.IMAGE_HEIGHT_SMALL = Integer.parseInt(properties.getProperty("heightSmall"));
 		this.IMAGE_WIDTH_MEDIUM = Integer.parseInt(properties.getProperty("widthMedium"));
@@ -68,23 +81,23 @@ public class ImageManager {
 	}
 	
 	public Map<String, String> processImage(String imageURL){
+		Integer attempts = 0;
 		URL originalURL = null;
 		BufferedImage original = null;
-		Integer attempts = 0;
-		Boolean downloadSuccess = false;
 		Map<String, String> links = new HashMap<String, String>();
 		
 		do{
 			try{
 				originalURL = new URL(imageURL);
 				original = ImageIO.read(originalURL);
-				downloadSuccess = true;
 			}catch(Exception e){
+				e.printStackTrace();
+			}finally{
 				attempts += 1;
 			}
-		}while(attempts < 2 && !downloadSuccess);
+		}while(attempts < 2 && original == null);
 		
-		if(downloadSuccess){
+		if(original != null){
 			links.put("width", Integer.toString(original.getWidth()));
 			links.put("height", Integer.toString(original.getHeight()));
 			
@@ -116,6 +129,12 @@ public class ImageManager {
 					}
 				}
 			} catch(Exception e){}
+		}else{
+			links.put("small", this.DEFAULT_IMAGE_SMALL);
+			links.put("medium", this.DEFAULT_IMAGE_MEDIUM);
+			links.put("large", this.DEFAULT_IMAGE_LARGE);
+			links.put("width", Integer.toString(this.DEFAULT_IMAGE_WIDTH));
+			links.put("height", Integer.toString(this.DEFAULT_IMAGE_HEIGHT));
 		}
 
 		return links;

@@ -19,7 +19,7 @@ public abstract class AbstractFromListMediaCollector implements MediaCollectionT
 	
 	public AbstractFromListMediaCollector(Properties properties){
 		this.properties = properties;
-		this.done = MyFileUtils.readFileToList(properties.getProperty("historyLocation"));
+		//this.done = MyFileUtils.readFileToList(properties.getProperty("historyLocation"));
 	}
 	
 	private void done(String URL){
@@ -38,11 +38,16 @@ public abstract class AbstractFromListMediaCollector implements MediaCollectionT
 		}
 	}
 	
+	private List<String> getDone(){
+		return MyFileUtils.readFileToList(properties.getProperty("historyLocation"));
+	}
+	
 	protected abstract List<String> getToDo();
 	protected abstract void visit(Document doc);
 	
 	@Override
 	public void run() {
+		done = getDone();
 		toDo = getToDo();
 		System.out.println("FOUND " + toDo.size() + " entries todo");
 		for(String current : toDo){

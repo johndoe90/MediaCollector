@@ -46,7 +46,7 @@ public class DerStandardArticleCollectionTask extends AbstractFromListMediaColle
 			Elements elements = document.select("url > loc");
 			for(Element element : elements){
 				todo.add(element.text());
-				System.out.println("Adding " + element.text() + " --> todo");
+				//System.out.println("Adding " + element.text() + " --> todo");
 			}
 		} catch(IOException e){
 			e.printStackTrace();
@@ -62,17 +62,17 @@ public class DerStandardArticleCollectionTask extends AbstractFromListMediaColle
 		if(media != null && !mediaService.exists(media.getUrl())){
 			if(media.getImageSmall() != null){
 				Map<String, String> links = ImageUtils.buildImageTree(media.getImageSmall());
-				media.setImageSmall(links.get("small") != null ? links.get("small") : media.getImageSmall());
+				media.setImageSmall(links.get("medium"));
 				media.setImageMedium(links.get("medium"));
-				media.setImageLarge(links.get("large"));
-				media.setImageWidth(links.get("width") != null ? Integer.parseInt(links.get("width")) : null);
-				media.setImageHeight(links.get("height") != null ? Integer.parseInt(links.get("height")) : null);
+				media.setImageLarge(links.get("medium"));
+				media.setImageWidth(Integer.parseInt(links.get("width")));
+				media.setImageHeight(Integer.parseInt(links.get("height")));
 			}else{
-				media.setImageSmall("http://dreamslider.com/portals/0/images/Templates/no-image-available.png");
-				media.setImageMedium("http://dreamslider.com/portals/0/images/Templates/no-image-available.png");
-				media.setImageLarge("http://dreamslider.com/portals/0/images/Templates/no-image-available.png");
-				media.setImageWidth(466);
-				media.setImageHeight(224);
+				media.setImageSmall("http://static.pagenstecher.de/uploads/f/f9/f9e/f9e6/photo-not-available.jpg");
+				media.setImageMedium("http://static.pagenstecher.de/uploads/f/f9/f9e/f9e6/photo-not-available.jpg");
+				media.setImageLarge("http://static.pagenstecher.de/uploads/f/f9/f9e/f9e6/photo-not-available.jpg");
+				media.setImageWidth(500);
+				media.setImageHeight(493);
 			}
 			
 			mediaService.persist(media);

@@ -14,38 +14,39 @@ import org.jsoup.select.Elements;
 import com.phillip.news.media.collector.article.ArticleCollectionTaskConfiguration;
 import com.phillip.news.utils.MyFileUtils;
 
-public abstract class AbstractArticleCollector implements MediaCollectionTask{
+public abstract class AbstractCrawlingArticleCollector implements MediaCollectionTask{
 	
 	private final ArticleCollectionTaskConfiguration config;
-	private final MultiValueMap todo;
-	private final MultiValueMap done;
+	private MultiValueMap todo;
+	private MultiValueMap done;
 	
-	public AbstractArticleCollector(ArticleCollectionTaskConfiguration config){
+	public AbstractCrawlingArticleCollector(ArticleCollectionTaskConfiguration config){
 		this.config = config;
 		this.todo = new MultiValueMap();
-		this.done = MyFileUtils.readFileToMultiValueMap(config.getHistoryLocation());
+		//this.done = new MultiValueMap();
+		//this.done = MyFileUtils.readFileToMultiValueMap(config.getHistoryLocation());
 	}
 
 	private void initToDo(List<String> seeds){
-		synchronized (todo) {
+		//synchronized (todo) {
 			for(String seed : seeds){
 				if(!todo.containsValue(0, seed)){
 					todo.put(0, seed);
 				}
 			}
-		}
+		//}
 	}
 	
 	private void removeSeedsFromDone(List<String> seeds){
-		synchronized (done) {
+		//synchronized (done) {
 			for(String seed : seeds){
 				done.remove(0, seed);
 			}
-		}
+		//}
 	}
 	
 	private String next(Integer level){
-		synchronized (todo) {
+		//synchronized (todo) {
 			Collection<String> urls = todo.getCollection(level);
 			if(urls != null){
 				String next = urls.iterator().next();
@@ -55,33 +56,33 @@ public abstract class AbstractArticleCollector implements MediaCollectionTask{
 			}
 			
 			return null;
-		}
+		//}
 	}
 	
 	private void toDo(Integer level, List<String> URLs){
-		synchronized (todo) {
+		//synchronized (todo) {
 			for(String URL : URLs){
 				todo.put(level, URL);
 			}
-		}
+		//}
 	}
 	
 	private void toDo(Integer level, String URL){
-		synchronized (todo) {
+		//synchronized (todo) {
 			todo.put(level, URL);
-		}
+		//}
 	}
 	
 	private void done(Integer level, String URL){
-		synchronized (done) {
+		//synchronized (done) {
 			done.put(level, URL);
-		}
+		//}
 	}
 	
 	private boolean isVisited(String URL){
-		synchronized (done) {
+		//synchronized (done) {
 			return done.containsValue(URL);
-		}
+		//}
 	}
 	
 	@Override
@@ -89,6 +90,7 @@ public abstract class AbstractArticleCollector implements MediaCollectionTask{
 		String URL = "";
 		Integer level = 0;
 		
+		done = MyFileUtils.readFileToMultiValueMap(config.getHistoryLocation());
 		initToDo(config.getSeeds());
 		while(level <= config.getMaxLevel()){
 			while((URL = next(level)) != null){

@@ -44,12 +44,18 @@ public class ApplicationContextConfig extends WebMvcConfigurerAdapter{
 	@Inject private AmazonS3 amazonS3Client;
 	@Inject private MediaService mediaService;
 	@Inject private MediaCollector kurierMediaCollector;
+	@Inject private MediaCollector diePresseMediaCollector;
 	@Inject private MediaCollector derStandardMediaCollector;
 	
 	@Bean
 	public ImageManager imageManager(){
 		Properties properties = new Properties();
 		properties.setProperty("bucketName", env.getRequiredProperty("amazonS3.images.bucketName"));
+		properties.setProperty("defaultImageSmall", env.getRequiredProperty("amazonS3.images.defaultImageSmall"));
+		properties.setProperty("defaultImageMedium", env.getRequiredProperty("amazonS3.images.defaultImageMedium"));
+		properties.setProperty("defaultImageLarge", env.getRequiredProperty("amazonS3.images.defaultImageLarge"));
+		properties.setProperty("defaultImageWidth", env.getRequiredProperty("amazonS3.images.defaultImage.width"));
+		properties.setProperty("defaultImageHeight", env.getRequiredProperty("amazonS3.images.defaultImage.height"));
 		properties.setProperty("temporaryStorageLocation", env.getRequiredProperty("amazonS3.images.temporaryLocalStorageLocation"));
 		properties.setProperty("widthSmall", env.getRequiredProperty("amazonS3.images.widthSmall"));
 		properties.setProperty("heightSmall", env.getRequiredProperty("amazonS3.images.heightSmall"));
@@ -64,6 +70,7 @@ public class ApplicationContextConfig extends WebMvcConfigurerAdapter{
 		MediaCollectors mediaCollectors = new MediaCollectors();
 		mediaCollectors.addMediaCollector(kurierMediaCollector);
 		mediaCollectors.addMediaCollector(derStandardMediaCollector);
+		mediaCollectors.addMediaCollector(diePresseMediaCollector);
 		
 		return mediaCollectors;
 		

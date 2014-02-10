@@ -18,7 +18,7 @@ public class Collector {
 	@Inject private MediaCollectors mediaCollectors;
 	
 	private boolean lastCycleIsFinished = true;	
-	private static final Integer threadPoolSize = 2;
+	private static final Integer threadPoolSize = 3;
 
 	private static ExecutorService startExecution(MediaCollectors mediaCollectors){
 		ExecutorService executor = Executors.newFixedThreadPool(threadPoolSize);

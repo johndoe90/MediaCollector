@@ -1,6 +1,7 @@
 package com.phillip.news;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -112,23 +113,33 @@ public class DataInit implements InitializingBean{
 			categories.put(cat, category);
 		}
 	}
+	
+	private void initializeFolderStructure(){
+		File temp;
+		String[] mediaProviders = env.getRequiredProperty("mediaProviders").split(",");
+		String historyLocation = env.getRequiredProperty("mediaProviders.historyLocation");		
+		
+		temp = new File(historyLocation);
+		if(!temp.exists()) { temp.mkdirs(); }
 
+		for(String mediaProvider : mediaProviders){
+			try {
+				temp = new File(historyLocation + File.separator + mediaProvider);
+				if(temp.exists()){
+					temp.delete();
+				}
+				
+				temp.createNewFile();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
 	@Override
 	public void afterPropertiesSet() throws Exception {
-		/*File temp;
-		String[] mediaProviders = env.getRequiredProperty("mediaProviders").split(",");
-		String historyLocation = env.getRequiredProperty("mediaProviders.historyLocation");
-		for(String mediaProvider : mediaProviders){
-			temp = new File()
-		}*/
-		
-		/*File temp = new File(TOMCAT_LOCAL_DIRECTORY);
-		
-		if(!temp.exists()){ 
-			temp.mkdir();
-		}*/
-		
-		if(env.getRequiredProperty("hibernate.hbm2ddl.auto").contains("create")){
+		if(env.getRequiredProperty("hibernate.hbm2ddl.auto").equals("create")){
+			initializeFolderStructure();
 			initializeLanguages();
 			initializeMediaProviders();
 			initializeCategories();

@@ -47,10 +47,13 @@ public class KurierMediaMapper extends AbstractMediaMapper{
 			case "wirtschaft": return Categories.ECONOMY;
 			case "sport": return Categories.SPORTS;
 			case "chronik": return Categories.PANORAMA;
-			case "lebensart": return Categories.LIFE;
 			case "kultur": return Categories.CULTURE;
 			case "immo": return Categories.REALESTATE;
 			case "karrieren": return Categories.EDUCATION;
+			
+			case "menschen": return Categories.LIFE;
+			case "lebensart": return Categories.LIFE;
+			
 			default: return Categories.OTHER;
 		}
 		
