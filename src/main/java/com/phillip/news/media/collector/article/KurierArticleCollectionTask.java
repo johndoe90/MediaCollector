@@ -35,22 +35,17 @@ public class KurierArticleCollectionTask extends AbstractCrawlingArticleCollecto
 
 	@Override
 	protected boolean shouldVisit(String URL) {
-		if(getConfig().getFilters().matcher(URL).matches())
-			return false;
-		
-		//contains # in filter regex reinschmeißen
+		if(getConfig().getFilters().matcher(URL).matches()) { return false; }
 		for(String domain : getConfig().getSeeds()){
-			if(URL.startsWith(domain) && !URL.endsWith("/print") && !URL.contains("#"))
-				return true;
+			if(URL.startsWith(domain) && !URL.endsWith("/print") && !URL.contains("#")) { return true; }
 		}
 		
 		return false;
 	}
 	
-	/*gehört eigentlich in abstract article collector ? */
-	
 	@Override
 	protected void visit(Document document) {
+		System.out.println("Visiting: " + document.baseUri());
 		Media media = mediaMapper.map(document);
 		if(media != null && !mediaService.exists(media.getUrl())){
 			

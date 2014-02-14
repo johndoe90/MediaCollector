@@ -19,8 +19,10 @@ public abstract class AbstractFromListMediaCollector implements MediaCollectionT
 	
 	public AbstractFromListMediaCollector(Properties properties){
 		this.properties = properties;
-		//this.done = MyFileUtils.readFileToList(properties.getProperty("historyLocation"));
 	}
+	
+	protected abstract List<String> getToDo();
+	protected abstract void visit(Document doc);
 	
 	private void done(String URL){
 		done.add(URL);
@@ -42,26 +44,27 @@ public abstract class AbstractFromListMediaCollector implements MediaCollectionT
 		return MyFileUtils.readFileToList(properties.getProperty("historyLocation"));
 	}
 	
-	protected abstract List<String> getToDo();
-	protected abstract void visit(Document doc);
+	private Document fetch(String url) throws NumberFormatException, IOException{
+		return Jsoup.connect(url).timeout(Integer.parseInt(properties.getProperty("timeout"))).userAgent(properties.getProperty("userAgent")).get();
+	}
 	
 	@Override
 	public void run() {
+		Document document;
+		
 		done = getDone();
 		toDo = getToDo();
 		System.out.println("FOUND " + toDo.size() + " entries todo");
 		for(String current : toDo){
-			if(!wasVisited(current)){
-				done(current);
-				System.out.println(Thread.currentThread().getName() + " VISITING: " + current);
-				try {
-					Document document = Jsoup.connect(current).timeout(Integer.parseInt(properties.getProperty("timeout"))).userAgent(properties.getProperty("userAgent")).get();
+			try {
+				if(!wasVisited(current)){
+					done(current);
+					document = fetch(current);
 					visit(document);
-				} catch (IOException e) { 
-					e.printStackTrace();
+					pause(Integer.parseInt(properties.getProperty("pause")));
 				}
-				
-				pause(Integer.parseInt(properties.getProperty("pause")));
+			} catch(Exception e){
+				e.printStackTrace();
 			}
 		}
 		

@@ -46,7 +46,6 @@ public class DerStandardArticleCollectionTask extends AbstractFromListMediaColle
 			Elements elements = document.select("url > loc");
 			for(Element element : elements){
 				todo.add(element.text());
-				//System.out.println("Adding " + element.text() + " --> todo");
 			}
 		} catch(IOException e){
 			e.printStackTrace();
@@ -57,7 +56,7 @@ public class DerStandardArticleCollectionTask extends AbstractFromListMediaColle
 
 	@Override
 	protected void visit(Document document) {
-		
+		System.out.println("Visiting: " + document.baseUri());
 		Media media = mediaMapper.map(document);
 		if(media != null && !mediaService.exists(media.getUrl())){
 			if(media.getImageSmall() != null){

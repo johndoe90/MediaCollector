@@ -23,100 +23,53 @@ public abstract class AbstractCrawlingArticleCollector implements MediaCollectio
 	public AbstractCrawlingArticleCollector(ArticleCollectionTaskConfiguration config){
 		this.config = config;
 		this.todo = new MultiValueMap();
-		//this.done = new MultiValueMap();
-		//this.done = MyFileUtils.readFileToMultiValueMap(config.getHistoryLocation());
+	}
+	protected abstract void visit(Document doc);
+	protected abstract boolean shouldVisit(String URL);
+	
+	public ArticleCollectionTaskConfiguration getConfig() {
+		return config;
 	}
 
 	private void initToDo(List<String> seeds){
-		//synchronized (todo) {
-			for(String seed : seeds){
-				if(!todo.containsValue(0, seed)){
-					todo.put(0, seed);
-				}
+		for(String seed : seeds){
+			if(!todo.containsValue(0, seed)){
+				todo.put(0, seed);
 			}
-		//}
+		}
 	}
 	
 	private void removeSeedsFromDone(List<String> seeds){
-		//synchronized (done) {
-			for(String seed : seeds){
-				done.remove(0, seed);
-			}
-		//}
+		for(String seed : seeds){
+			done.remove(0, seed);
+		}
 	}
 	
 	private String next(Integer level){
-		//synchronized (todo) {
-			Collection<String> urls = todo.getCollection(level);
-			if(urls != null){
-				String next = urls.iterator().next();
-				todo.remove(level,  next);
-				
-				return next;
-			}
+		Collection<String> urls = todo.getCollection(level);
+		if(urls != null){
+			String next = urls.iterator().next().toLowerCase();
+			todo.remove(level,  next);
 			
-			return null;
-		//}
-	}
-	
-	private void toDo(Integer level, List<String> URLs){
-		//synchronized (todo) {
-			for(String URL : URLs){
-				todo.put(level, URL);
-			}
-		//}
+			return next;
+		}
+			
+		return null;
 	}
 	
 	private void toDo(Integer level, String URL){
-		//synchronized (todo) {
-			todo.put(level, URL);
-		//}
+		todo.put(level, URL);
 	}
 	
-	private void done(Integer level, String URL){
-		//synchronized (done) {
-			done.put(level, URL);
-		//}
+	private void addToDone(Integer level, String URL){
+		done.put(level, URL);
 	}
 	
-	private boolean isVisited(String URL){
-		//synchronized (done) {
-			return done.containsValue(URL);
-		//}
+	private boolean wasVisited(String URL){
+		return done.containsValue(URL);
 	}
 	
-	@Override
-	public void run() {
-		String URL = "";
-		Integer level = 0;
-		
-		done = MyFileUtils.readFileToMultiValueMap(config.getHistoryLocation());
-		initToDo(config.getSeeds());
-		while(level <= config.getMaxLevel()){
-			while((URL = next(level)) != null){
-				if(shouldVisit(URL) && !isVisited(URL)){		
-					System.out.println(Thread.currentThread().getName() + " Level: " + level + " / VISITING: " + URL);
-					done(level, URL);
-					
-					try {
-						Document document = Jsoup.connect(URL).timeout(config.getTimeout()).userAgent(config.getUserAgent()).get();
-						newLinks(level, document);
-						visit(document);
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-					
-					pause(new Random().nextInt(100) + config.getPause());
-				}
-			}
-			level += 1;
-		}
-		
-		removeSeedsFromDone(config.getSeeds());
-		MyFileUtils.writeMultiValueMapToFile(config.getHistoryLocation(), done);
-	}
-	
-	private void newLinks(Integer level, Document document){
+	private void addNewLinks(Integer level, Document document){
 		Elements links = document.select("a[href]");
 		for(Element link : links){
 			String URL = link.attr("abs:href").toLowerCase();
@@ -132,12 +85,37 @@ public abstract class AbstractCrawlingArticleCollector implements MediaCollectio
 		}
 	}
 	
-	protected void visit(Document doc){
+	private Document fetch(String URL) throws IOException{
+		return Jsoup.connect(URL).timeout(config.getTimeout()).userAgent(config.getUserAgent()).get();
 	}
 	
-	protected abstract boolean shouldVisit(String URL);
-
-	public ArticleCollectionTaskConfiguration getConfig() {
-		return config;
+	@Override
+	public void run() {
+		String URL = "";
+		Document document;
+		Integer level = 0;
+		
+		done = MyFileUtils.readFileToMultiValueMap(config.getHistoryLocation());
+		initToDo(config.getSeeds());
+		while(level <= config.getMaxLevel()){
+			while((URL = next(level)) != null){
+				try {
+					if(!wasVisited(URL) && shouldVisit(URL)){		
+						addToDone(level, URL);
+						document = fetch(URL);
+						addNewLinks(level, document);
+						visit(document);
+						pause(config.getPause());
+					}
+				} catch (Exception e){
+					e.printStackTrace();
+				}
+			}
+			
+			level += 1;
+		}
+		
+		removeSeedsFromDone(config.getSeeds());
+		MyFileUtils.writeMultiValueMapToFile(config.getHistoryLocation(), done);
 	}
 }

@@ -71,20 +71,20 @@ public class ImageUtils {
 		URL originalURL = null;
 		BufferedImage original = null;
 		Integer attempts = 0;
-		Boolean downloadSuccess = false;
 		Map<String, String> links = new HashMap<String, String>();
 		
 		do{
 			try{
 				originalURL = new URL(imageURL);
 				original = ImageIO.read(originalURL);
-				downloadSuccess = true;
 			}catch(Exception e){
+				e.printStackTrace();
+			}finally{
 				attempts += 1;
 			}
-		}while(attempts < 2 && !downloadSuccess);
+		}while(attempts < 2 && original == null);
 		
-		if(downloadSuccess){
+		if(original != null){
 			/*try{
 				BufferedImage imageSmall = ImageUtils.fitToFrame(original, FRAME_SMALL, FRAME_SMALL);
 				String smallFilename = ImageUtils.createRandomFileName(10) + ".jpg";
@@ -115,6 +115,12 @@ public class ImageUtils {
 			
 			links.put("width", Integer.toString(original.getWidth()));
 			links.put("height", Integer.toString(original.getHeight()));
+		}else{
+			links.put("small", "http://static.pagenstecher.de/uploads/f/f9/f9e/f9e6/photo-not-available.jpg");
+			links.put("medium", "http://static.pagenstecher.de/uploads/f/f9/f9e/f9e6/photo-not-available.jpg");
+			links.put("large", "http://static.pagenstecher.de/uploads/f/f9/f9e/f9e6/photo-not-available.jpg");
+			links.put("width", "500");
+			links.put("height", "493");
 		}
 
 		return links;

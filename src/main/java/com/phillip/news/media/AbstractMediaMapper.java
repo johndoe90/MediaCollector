@@ -1,5 +1,7 @@
 package com.phillip.news.media;
 
+import java.util.List;
+
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
@@ -15,6 +17,15 @@ public abstract class AbstractMediaMapper implements MediaMapper{
 	public AbstractMediaMapper(MediaProvider mediaProvider){
 		this.mediaProvider = mediaProvider;
 	}
+	
+	/*protected boolean matches(List<String> A, String B){
+		for(String a : A){
+			if(a.equalsIgnoreCase(B))
+				return true;
+		}
+		
+		return false;
+	}*/
 	
 	protected String getMetaProperty(Document document, String cssQuery){
 		Element element = document.select(cssQuery).first();

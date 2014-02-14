@@ -17,13 +17,16 @@ public class ArticleCollectionTaskConfiguration {
 	private String userAgent = "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)";
 	private List<String> seeds = new ArrayList<String>();
 	private Integer pause = 2500;
-	private Integer timeout = 10000;
+	private Integer timeout = 20000;
 	private String historyLocation = "";
 	
 	public ArticleCollectionTaskConfiguration(){}
 	public ArticleCollectionTaskConfiguration(String historyLocation, List<String> seeds){
 		this.historyLocation = historyLocation;
-		this.seeds = seeds;
+		this.seeds = new ArrayList<String>();
+		for(String seed : seeds){
+			this.seeds.add(seed.toLowerCase());
+		}
 	}
 
 	public Integer getMaxLevel() {

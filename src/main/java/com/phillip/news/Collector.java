@@ -16,12 +16,9 @@ import com.phillip.news.media.collector.MediaCollectors;
 public class Collector {
 
 	@Inject private MediaCollectors mediaCollectors;
-	
-	private boolean lastCycleIsFinished = true;	
-	private static final Integer threadPoolSize = 3;
 
 	private static ExecutorService startExecution(MediaCollectors mediaCollectors){
-		ExecutorService executor = Executors.newFixedThreadPool(threadPoolSize);
+		ExecutorService executor = Executors.newFixedThreadPool(mediaCollectors.getMediaCollectors().size());
 		for(MediaCollector mediaCollector : mediaCollectors.getMediaCollectors()){
 			for(MediaCollectionTask task : mediaCollector.getMediaCollectionTasks()){
 				executor.execute(task);
@@ -35,17 +32,13 @@ public class Collector {
 	
 	@Scheduled(fixedRate = 600000)
 	public void startCycle() throws Exception{
-		System.out.println("Enter startCycle");
-		if(lastCycleIsFinished){
-			System.out.println("startCycle");
-			lastCycleIsFinished = false;
-			ExecutorService executor = startExecution(mediaCollectors); 
-			while(!executor.isTerminated()){
-				Thread.sleep(1000);
-			}
-			
-			lastCycleIsFinished = true;
-			System.out.println("Cycle finished");
+		System.out.print("\n\nSTARTING NEW CYCLE\n\n");
+		
+		ExecutorService executor = startExecution(mediaCollectors); 
+		while(!executor.isTerminated()){
+			Thread.sleep(1000);
 		}
+
+		System.out.print("\n\nCYCLE FINISHED\n\n");
 	}
 }

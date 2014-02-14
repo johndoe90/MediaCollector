@@ -46,6 +46,9 @@ public class ApplicationContextConfig extends WebMvcConfigurerAdapter{
 	@Inject private MediaCollector kurierMediaCollector;
 	@Inject private MediaCollector diePresseMediaCollector;
 	@Inject private MediaCollector derStandardMediaCollector;
+	@Inject private MediaCollector kronenZeitungMediaCollector;
+	@Inject private MediaCollector ooeNachrichtenMediaCollector;
+	@Inject private MediaCollector tirTageszeitungMediaCollector;
 	
 	@Bean
 	public ImageManager imageManager(){
@@ -71,9 +74,11 @@ public class ApplicationContextConfig extends WebMvcConfigurerAdapter{
 		mediaCollectors.addMediaCollector(kurierMediaCollector);
 		mediaCollectors.addMediaCollector(derStandardMediaCollector);
 		mediaCollectors.addMediaCollector(diePresseMediaCollector);
-		
+		mediaCollectors.addMediaCollector(kronenZeitungMediaCollector);
+		mediaCollectors.addMediaCollector(ooeNachrichtenMediaCollector);
+		mediaCollectors.addMediaCollector(tirTageszeitungMediaCollector);
+
 		return mediaCollectors;
-		
 	}
 	
 	@Override
